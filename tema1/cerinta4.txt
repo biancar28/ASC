@@ -1,0 +1,398 @@
+.data
+
+	str: .space 400
+	formatScanf: .asciz "%[^\n]"
+	chDelim: .asciz " "
+	M: .space 1600
+	Mx: .space 1600
+	formatPrintf: .asciz "%d "
+	formatend: .asciz "\n"
+	l: .space 4
+	c: .space 4
+	n: .space 4
+	res: .space 4
+	Indexl: .long 0
+	Indexc: .long 0
+	Indexn: .space 4
+	I: .space 4
+
+.text
+
+.global main
+
+main:
+
+	pushl $str
+	pushl $formatScanf
+	call scanf
+	popl %ebx
+	popl %ebx
+	
+	pushl $chDelim
+	pushl $str
+	call strtok 
+	popl %ebx
+	popl %ebx
+	
+	pushl $chDelim
+	pushl $0
+	call strtok
+	popl %ebx
+	popl %ebx
+	
+	movl %eax, res
+	
+	pushl res
+	call atoi
+	popl %ebx
+	
+	movl %eax, l
+
+	pushl $chDelim
+	pushl $0
+	call strtok
+	popl %ebx
+	popl %ebx
+	
+	movl %eax, res
+	
+	pushl res
+	call atoi
+	popl %ebx
+	
+	movl %eax, c
+	movl l, %ebx
+	mull %ebx
+	movl %eax, n
+	
+	movl $M, %esi			
+	xorl %edx, %edx
+	
+et_for:
+
+	cmp n, %edx
+	je et_f
+	pushl %edx
+	
+	pushl $chDelim
+	pushl $0
+	call strtok
+	popl %ebx
+	popl %ebx
+	
+	movl %eax, res
+	
+	pushl res
+	call atoi
+	popl %ebx
+	
+	popl %edx
+	
+	movl %eax, (%esi, %edx, 4)
+	incl %edx
+	
+	jmp et_for
+	
+et_f:
+
+	pushl $chDelim
+	pushl $0
+	call strtok
+	popl %ebx
+	popl %ebx
+	
+	cmp $0, %eax
+	je et_exit
+	
+	movl %eax, res
+	
+	pushl res
+	call atoi
+	popl %ebx
+	
+	cmp $0, %eax
+	je et_op
+	jmp et_nr
+	
+et_nr:
+
+	pushl %eax
+	jmp et_f
+	
+et_op:
+
+	movl res, %edi
+	xorl %ecx, %ecx
+	movb (%edi, %ecx, 1), %al
+	
+	cmp $97, %al
+	je et_add
+	
+	cmp $115, %al
+	je et_sub
+	
+	cmp $109, %al
+	je et_mul
+	
+	cmp $100, %al
+	je et_div
+	
+	cmp $114, %al
+	je et_rot
+	
+	jmp et_f
+	
+et_add:
+
+	incl %ecx
+	movb (%edi, %ecx, 1), %al
+	cmp $0, %al
+	je et_f
+	
+	popl %eax
+	xorl %edx, %edx
+	
+	et_fadd:
+	
+		cmp n, %edx
+		je et_f
+		
+		movl (%esi, %edx, 4), %ebx
+		addl %eax, %ebx
+		movl %ebx, (%esi, %edx, 4)
+		incl %edx
+		
+		jmp et_fadd
+			
+
+et_sub:
+
+	incl %ecx
+	movb (%edi, %ecx, 1), %al
+	cmp $0, %al
+	je et_f
+
+	popl %eax
+	xorl %edx, %edx
+	
+	et_fsub:
+	
+		cmp n, %edx
+		je et_f
+		
+		movl (%esi, %edx, 4), %ebx
+		subl %eax, %ebx
+		movl %ebx, (%esi, %edx, 4)
+		incl %edx
+		
+		jmp et_fsub
+et_mul:
+
+	incl %ecx
+	movb (%edi, %ecx, 1), %al
+	cmp $0, %al
+	je et_f
+
+	popl %eax
+	movl %eax, %ebx
+	xorl %ecx, %ecx
+	
+	et_fmul:
+	
+		xorl %edx, %edx
+		cmp n, %ecx
+		je et_f
+		
+		movl (%esi, %ecx, 4), %eax
+		imull %ebx
+		movl %eax, (%esi, %ecx, 4)
+		incl %ecx
+		
+		jmp et_fmul
+
+		
+et_div:
+
+	incl %ecx
+	movb (%edi, %ecx, 1), %al
+	cmp $0, %al
+	je et_f
+
+	popl %eax
+	movl %eax, %ebx
+	xorl %ecx, %ecx
+	
+	et_fdiv:
+	
+		xorl %edx, %edx
+		cmp n, %ecx
+		je et_f
+		
+		movl (%esi, %ecx, 4), %eax
+		cdq
+		idivl %ebx
+		movl %eax, (%esi, %ecx, 4)
+		incl %ecx
+		
+		jmp et_fdiv
+
+et_rot:
+
+	incl %ecx
+	movb (%edi, %ecx, 1), %al
+	cmp $0, %al
+	je et_f
+
+	movl $Mx, %edi
+	xorl %ecx, %ecx
+	lea M, %esi
+	xorl %edx, %edx
+	movl n, %ebx
+	movl %ebx, Indexn
+	movl %ebx, I
+
+For:
+	
+	movl Indexc, %ebx
+	cmp c, %ebx
+	je et_exit2
+	
+	et:
+		
+		movl Indexl, %ebx
+		cmp l, %ebx
+		je cont 
+		
+		movl Indexn, %edx
+		subl c, %edx
+		movl (%esi, %edx, 4), %ebx
+		movl %ebx, (%edi, %ecx, 4)
+		incl %ecx
+		
+		movl %edx, Indexn
+		movl Indexl, %ebx
+		incl %ebx
+		movl %ebx, Indexl
+		jmp et
+		
+	cont:
+	
+		movl I, %ebx
+		incl %ebx
+		movl %ebx, Indexn
+		movl %ebx, I
+		movl Indexc, %ebx
+		incl %ebx
+		movl %ebx, Indexc
+		movl Indexl, %ebx
+		movl $0, %ebx
+		movl %ebx, Indexl
+		jmp For
+
+et_exit:
+
+	pushl l
+	pushl $formatPrintf
+	call printf
+	popl %ebx
+	popl %ebx
+	
+	pushl $0
+	call fflush
+	popl %ebx
+	
+	pushl c
+	pushl $formatPrintf
+	call printf
+	popl %ebx
+	popl %ebx
+	
+	pushl $0
+	call fflush
+	popl %ebx
+
+	lea M, %esi
+	xorl %edx, %edx
+
+	f:
+	
+		cmp n, %edx
+		je exit
+		
+		movl (%esi, %edx, 4), %eax
+
+		pushl %edx
+		
+		pushl %eax
+		pushl $formatPrintf
+		call printf
+		popl %ebx
+		popl %ebx
+		
+		pushl $0
+		call fflush
+		popl %ebx
+		
+		popl %edx
+		incl %edx
+		jmp f
+
+et_exit2:
+	
+	pushl c
+	pushl $formatPrintf
+	call printf
+	popl %ebx
+	popl %ebx
+	
+	pushl $0
+	call fflush
+	popl %ebx
+	
+	pushl l
+	pushl $formatPrintf
+	call printf
+	popl %ebx
+	popl %ebx
+	
+	pushl $0
+	call fflush
+	popl %ebx
+	
+	lea Mx, %edi
+	xorl %ecx, %ecx
+	
+	f2:
+	
+		cmp n, %ecx
+		je exit
+		
+		movl (%edi, %ecx, 4), %eax
+
+		pushl %ecx
+		
+		pushl %eax
+		pushl $formatPrintf
+		call printf
+		popl %ebx
+		popl %ebx
+		
+		pushl $0
+		call fflush
+		popl %ebx
+		
+		popl %ecx
+		incl %ecx
+		jmp f2	
+
+exit:
+
+	pushl $formatend
+	call printf
+	popl %ebx
+
+	movl $1, %eax
+	movl $0, %ebx
+	int $0x80
+	
+		

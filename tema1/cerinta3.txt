@@ -1,0 +1,222 @@
+.data
+	
+	
+	str: .space 101
+	chDelim: .asciz " "
+	formatPrintf: .asciz "%d\n"
+	formatScanf: .asciz "%101[^\n]"
+	res: .space 4
+	v: .long 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	index1: .long 0
+	index2: .long 0
+	poz: .space 4
+
+.text
+
+.global main
+
+main:
+
+	pushl $str
+	pushl $formatScanf
+	call scanf
+	popl %ebx
+	popl %ebx
+	
+	pushl $chDelim
+	pushl $str
+	call strtok 
+	popl %ebx
+	popl %ebx
+	
+	lea v, %esi
+	movl %eax, res
+	
+	pushl res
+	call atoi
+	popl %ebx
+	
+	cmp $0, %eax
+	je et_alt
+	jmp et_nr
+	
+et_for:
+
+	pushl $chDelim
+	pushl $0
+	call strtok
+	popl %ebx
+	popl %ebx
+	
+	
+	cmp $0, %eax
+	je et_exit
+	
+	movl %eax, res
+	
+	pushl res
+	call atoi
+	popl %ebx
+	
+	cmp $0, %eax
+	je et_alt
+	jmp et_nr
+	
+et_nr:
+
+	pushl %eax
+	jmp et_for
+	
+et_alt:
+
+	movl res, %edi
+	xorl %ecx, %ecx
+	movb (%edi, %ecx, 1), %al
+	
+	cmp $97, %al
+	je et_add
+	
+	cmp $115, %al
+	je et_sub
+	
+	cmp $109, %al
+	je et_mul
+	
+	cmp $100, %al
+	je et_div
+	
+	cmp $108, %al
+	je et_let
+	
+	jmp et_var
+	
+et_var:
+
+	movl res, %edi
+	xorl %ecx, %ecx
+	movb (%edi, %ecx, 1), %al
+	mov %al, poz
+	sub $97, poz
+	movl poz, %edx
+	movl (%esi, %edx, 4), %ebx
+	cmp $0, %ebx
+	je nu
+
+	pushl %ebx
+	jmp et_for
+	
+nu:
+
+	movl res, %eax
+	pushl %eax
+	jmp et_for
+	
+et_let:
+
+	incl %ecx
+	movb (%edi, %ecx, 1), %al
+	cmp $0, %al
+	je et_var
+	
+	popl %eax
+	movl %eax, %ebx
+	popl %eax
+	movl %eax, %edi
+	xorl %ecx, %ecx
+	movb (%edi, %ecx, 1), %al
+	mov %al, poz
+	sub $97, poz
+	movl poz, %edx
+	movl %ebx, (%esi, %edx, 4)
+	
+	jmp et_for
+
+et_add:
+
+	incl %ecx
+	movb (%edi, %ecx, 1), %al
+	cmp $0, %al
+	je et_var
+	
+	popl %eax
+	movl %eax, %ebx
+	popl %eax
+	
+	addl %ebx, %eax
+	
+	pushl %eax
+	
+	jmp et_for
+	
+
+et_sub:
+
+	incl %ecx
+	movb (%edi, %ecx, 1), %al
+	cmp $0, %al
+	je et_var
+
+	popl %eax
+	movl %eax, %ebx
+	popl %eax
+	
+	subl %ebx, %eax
+	
+	pushl %eax
+	
+	jmp et_for
+
+et_mul:
+
+	incl %ecx
+	movb (%edi, %ecx, 1), %al
+	cmp $0, %al
+	je et_var
+
+	popl %eax
+	movl %eax, %ebx
+	popl %eax
+	
+	mull %ebx
+	
+	pushl %eax
+	
+	jmp et_for
+
+et_div:
+
+	incl %ecx
+	movb (%edi, %ecx, 1), %al
+	cmp $0, %al
+	je et_var
+
+	popl %eax
+	movl %eax, %ebx
+	popl %eax
+	xorl %edx, %edx
+	divl %ebx
+	
+	pushl %eax
+	
+	jmp et_for
+
+
+	
+et_exit:
+
+	popl %eax
+	movl %eax, res
+	
+	pushl res				
+	pushl $formatPrintf
+	call printf
+	popl %ebx
+	popl %ebx
+	
+	movl $1, %eax
+	xorl %ebx, %ebx
+	int $0x80
+	
+	
+	
+	

@@ -1,0 +1,146 @@
+.data
+
+	str: .space 101
+	chDelim: .asciz " "
+	formatPrintf: .asciz "%d\n"
+	formatScanf: .asciz "%101[^\n]"
+	res: .space 4
+	
+.text
+
+.global main
+
+main:
+
+	pushl $str
+	pushl $formatScanf
+	call scanf
+	popl %ebx
+	popl %ebx
+
+	pushl $chDelim
+	pushl $str
+	call strtok 
+	popl %ebx
+	popl %ebx
+	
+	movl %eax, res
+	
+	pushl res
+	call atoi
+	popl %ebx
+	
+	pushl %eax
+
+et_for:
+
+	pushl $chDelim
+	pushl $0
+	call strtok
+	popl %ebx
+	popl %ebx
+	
+	
+	cmp $0, %eax
+	je et_exit
+	
+	movl %eax, res
+	
+	pushl res
+	call atoi
+	popl %ebx
+	
+	cmp $0, %eax
+	je et_op
+	jmp et_nr
+	
+et_nr:
+
+	pushl %eax
+	jmp et_for
+
+et_op:
+
+	movl res, %edi
+	xorl %ecx, %ecx
+	movb (%edi, %ecx, 1), %al
+	
+	cmp $97, %al
+	je et_add
+	
+	cmp $115, %al
+	je et_sub
+	
+	cmp $109, %al
+	je et_mul
+	
+	cmp $100, %al
+	je et_div
+	
+	
+et_add:
+
+	popl %eax
+	movl %eax, %ebx
+	popl %eax
+	
+	addl %ebx, %eax
+	
+	pushl %eax
+	
+	jmp et_for
+	
+
+et_sub:
+
+	popl %eax
+	movl %eax, %ebx
+	popl %eax
+	
+	subl %ebx, %eax
+	
+	pushl %eax
+	
+	jmp et_for
+
+et_mul:
+
+	popl %eax
+	movl %eax, %ebx
+	popl %eax
+	
+	mull %ebx
+	
+	pushl %eax
+	
+	jmp et_for
+
+et_div:
+
+	popl %eax
+	movl %eax, %ebx
+	popl %eax
+	xorl %edx, %edx
+	divl %ebx
+	
+	pushl %eax
+	
+	jmp et_for
+
+	
+et_exit:
+
+	popl %eax
+	movl %eax, res
+	
+	pushl res				
+	pushl $formatPrintf
+	call printf
+	popl %ebx
+	popl %ebx
+	
+	movl $1, %eax
+	xorl %ebx, %ebx
+	int $0x80
+	
+	

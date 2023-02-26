@@ -1,0 +1,649 @@
+.data
+  
+  sirh: .space 101
+  sirb: .space 404
+  formatScanf: .asciz "%s"
+  indexf1: .long 0
+  sum: .space 4
+  formatvar: .asciz "%s "
+  minus: .asciz "-"
+  formatminus: .asciz "%s"
+  formatlet: .asciz "%s "
+  formatadd: .asciz "%s "
+  formatsub: .asciz "%s "
+  formatmul: .asciz "%s "
+  formatdiv: .asciz "%s "
+  formatnrp: .asciz "%d "
+  formatnrm: .asciz "%d "
+  indexsemn: .space 1
+  indexchr: .space 1
+  slet: .asciz "let"
+  sadd: .asciz "add"
+  ssub: .asciz "sub"
+  smul: .asciz "mul"
+  sdiv: .asciz "div"
+  formatPrintf: .asciz "\n"
+  
+.text
+
+.global main
+
+main:
+
+  pushl $sirh
+  pushl $formatScanf
+  call scanf
+  popl %ebx
+  popl %ebx
+  
+  movl $sirh, %edi
+  movl $sirb, %esi
+  xorl %ecx, %ecx
+  xorl %edx, %edx
+  
+et_for:
+
+  movb (%edi, %ecx, 1), %al
+  cmp $0, %al
+  je et_f
+  
+  cmp $48, %al
+  je cif0
+  cmp $49, %al
+  je cif1
+  cmp $50, %al
+  je cif2
+  cmp $51, %al
+  je cif3
+  cmp $52, %al
+  je cif4
+  cmp $53, %al
+  je cif5
+  cmp $54, %al
+  je cif6
+  cmp $55, %al
+  je cif7
+  cmp $56, %al
+  je cif8
+  cmp $57, %al
+  je cif9
+  cmp $65, %al
+  je litA
+  cmp $66, %al
+  je litB
+  cmp $67, %al
+  je litC
+  cmp $68, %al
+  je litD
+  cmp $69, %al
+  je litE
+  cmp $70, %al
+  je litF
+  
+  
+cif0:
+
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+cif1:
+
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+cif2:
+
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont  
+  
+cif3:
+
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+cif4:
+
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+cif5:
+
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+cif6:
+
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+cif7:
+
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+cif8:
+
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+cif9:
+
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+litA:
+
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+litB:
+
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+litC:
+
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+litD:
+
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+litE:
+
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $48, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+  
+litF:
+
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  movb $49, (%esi, %edx, 1)
+  incl %edx
+  
+  jmp cont
+
+cont:
+  
+  incl %ecx
+  jmp et_for
+  
+et_f:
+ 
+  movl indexf1, %ecx
+  movb (%esi, %ecx, 1), %al
+  
+  cmp $0, %al
+  je et_exit
+  
+  incl %ecx
+  movb (%esi, %ecx, 1), %al
+  
+  incl %ecx
+  cmp $48, %al
+  je et_chr
+  cmp $49, %al
+  je et_op
+  
+  
+et_chr:
+
+  movb (%esi, %ecx, 1), %al
+  movb %al, indexchr
+  
+  incl %ecx
+  movb (%esi, %ecx, 1), %al
+  movb %al, indexsemn
+    
+  incl %ecx
+  movb (%esi, %ecx, 1), %al
+  xorl %edx, %edx
+  cmp $49, %al
+  je et_b7
+  cmp $48, %al
+  je c7
+    
+  et_b7: 
+    addl $128, %edx
+    jmp c7
+      
+  c7:
+    incl %ecx
+    movb (%esi, %ecx, 1), %al
+    cmp $49, %al
+    je et_b6
+    cmp $48, %al
+    je c6
+      
+  et_b6:
+    addl $64, %edx
+    jmp c6
+    
+  c6:
+    incl %ecx
+    movb (%esi, %ecx, 1), %al
+    cmp $49, %al
+    je et_b5
+    cmp $48, %al
+    je c5
+      
+  et_b5:
+    addl $32, %edx
+    jmp c5
+
+  c5:
+    incl %ecx
+    movb (%esi, %ecx, 1), %al
+    cmp $49, %al
+    je et_b4
+    cmp $48, %al
+    je c4
+      
+  et_b4:
+    addl $16, %edx
+    jmp c4
+
+  c4:
+    incl %ecx
+    movb (%esi, %ecx, 1), %al
+    cmp $49, %al
+    je et_b3
+    cmp $48, %al
+    je c3
+      
+  et_b3:
+    addl $8, %edx
+    jmp c3
+
+  c3:
+    incl %ecx
+    movb (%esi, %ecx, 1), %al
+    cmp $49, %al
+    je et_b2
+    cmp $48, %al
+    je c2
+      
+  et_b2:
+    addl $4, %edx
+    jmp c2
+     
+  c2:
+    incl %ecx
+    movb (%esi, %ecx, 1), %al
+    cmp $49, %al
+    je et_b1
+    cmp $48, %al
+    je c1
+      
+  et_b1:
+    addl $2, %edx
+    jmp c1
+
+  c1:
+    incl %ecx
+    movb (%esi, %ecx, 1), %al
+    cmp $49, %al
+    je et_b0
+    cmp $48, %al
+    je c0
+      
+  et_b0:
+    addl $1, %edx
+    jmp c0
+
+  c0:
+    
+    movb indexchr, %al
+    cmp $48, %al
+    je et_nr
+    cmp $49, %al
+    je et_var
+    
+  et_nr:
+  
+    movb indexsemn, %al
+    cmp $48, %al
+    je et_plus
+    cmp $49, %al
+    je et_minus
+    
+  et_plus: 
+    
+    movl %edx, sum
+    
+    pushl %ecx
+    
+    pushl sum
+    pushl $formatnrp
+    call printf
+    popl %ebx
+    popl %ebx
+    
+    push $0
+    call fflush
+    pop %ebx
+       
+    popl %ecx
+     
+    jmp contf
+    
+  et_minus:
+    
+    movl %edx, sum
+    
+    pushl %ecx
+
+    pushl $minus
+    pushl $formatminus
+    call printf
+    popl %ebx
+    popl %ebx
+    
+    push $0
+    call fflush
+    pop %ebx
+    
+    pushl sum
+    pushl $formatnrm
+    call printf
+    popl %ebx
+    popl %ebx
+    
+    push $0
+    call fflush
+    pop %ebx
+    
+    popl %ecx
+
+    jmp contf
+    
+  et_var:
+    
+    movl %edx, sum
+    
+    pushl %ecx
+    
+    pushl $sum
+    pushl $formatvar
+    call printf
+    popl %ebx
+    popl %ebx
+    
+    push $0
+    call fflush
+    pop %ebx
+    
+    popl %ecx
+     
+    jmp contf
+
+et_op:  
+
+  addl $7, %ecx
+  movb (%esi, %ecx, 1), %al
+  cmp $49, %al
+  je et_div
+  cmp $48, %al
+  je op
+  
+  op:
+    
+    incl %ecx
+    movb (%esi, %ecx, 1), %al
+    cmp $49, %al
+    je op1
+    cmp $48, %al 
+    je op0
+   
+  op0:
+    incl %ecx
+    movb (%esi, %ecx, 1), %al
+    cmp $49, %al
+    je et_add
+    cmp $48, %al 
+    je et_let
+    
+  op1:
+    incl %ecx
+    movb (%esi, %ecx, 1), %al
+    cmp $49, %al
+    je et_mul
+    cmp $48, %al 
+    je et_sub
+      
+  et_let:
+  
+    pushl %ecx 
+  
+    pushl $slet
+    push $formatlet
+    call printf
+    popl %ebx
+    popl %ebx
+    
+    push $0
+    call fflush
+    pop %ebx
+    
+    popl %ecx
+ 
+    jmp contf
+    
+  et_add:
+
+    pushl %ecx
+
+    pushl $sadd
+    push $formatadd
+    call printf
+    popl %ebx
+    popl %ebx
+    
+    push $0
+    call fflush
+    pop %ebx
+
+    popl %ecx
+
+    jmp contf
+  
+  et_sub:
+  
+
+    pushl %ecx
+
+    pushl $ssub
+    push $formatsub
+    call printf
+    popl %ebx
+    popl %ebx
+    
+    push $0
+    call fflush
+    pop %ebx
+    
+    popl %ecx
+    
+    jmp contf
+  
+  et_mul:
+
+    pushl %ecx
+  
+    pushl $smul
+    push $formatmul
+    call printf
+    popl %ebx
+    popl %ebx
+    
+    push $0
+    call fflush
+    pop %ebx
+    
+    popl %ecx
+  
+    jmp contf
+  
+et_div:
+  
+  pushl %ecx
+    
+  pushl $sdiv
+  push $formatdiv
+  call printf
+  popl %ebx
+  popl %ebx
+  
+  push $0
+  call fflush
+  pop %ebx
+ 
+  popl %ecx
+
+  addl $2, %ecx
+  jmp contf
+  
+contf:
+  
+  incl %ecx
+  movl %ecx, indexf1
+  jmp et_f
+  
+ et_exit:
+ 
+  pushl $formatPrintf
+  call printf
+  popl %ebx
+ 
+  movl $1, %eax
+  movl $0, %ebx
+  int $0x80
+  
+   
+   

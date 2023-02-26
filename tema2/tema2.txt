@@ -1,0 +1,477 @@
+.data
+
+	str: .space 600
+	gresit: .asciz "-1"
+	n: .space 4
+	m: .space 4
+	k: .space 4
+	adev: .space 4
+	nr: .space 4
+	i: .space 4
+	N: .space 4
+	M: .space 4
+	K: .long 0
+	Adev: .long 0
+	index: .space 4
+	v: .space 500
+	fr: .space 300
+	V: .space 500
+	Fr: .space 300
+	res: .space 4
+	formatScanf: .asciz "%600[^\n]"
+	formatPrintf: .asciz "%d "
+	formatPrintfgresit: .asciz "%s"
+	formatprintf: .asciz "\n"
+	chDelim: .asciz " "
+
+.text
+
+.global main
+
+Back:
+
+	pushl %ebp           #lista reg. de restaurat: %ebx, %esi, %edi, %ebp, %esp
+	movl %esp, %ebp      # %esp:%ebp:(%ebp v)(<adr de in>)(*v)(k)(n)(m)(fr)(adev)          
+	pushl %ebx
+	movl 8(%ebp), %edi 
+	movl 12(%ebp), %edx  
+	movl %edx, k
+	movl 16(%ebp), %ecx  
+	movl %ecx, n
+	movl 20(%ebp), %ecx
+	movl %ecx, m
+	movl 24(%ebp), %esi
+	movl 28(%ebp), %eax
+	movl %eax, adev
+	cmp $1, %eax
+	je BK_exit
+	
+	movl n, %eax
+	movl $3, %ebx
+	mull %ebx
+	movl %eax, nr
+	
+	movl $0, %ebx
+	movl %ebx, index
+	
+	movl k, %edx
+	movl (%edi, %edx, 4), %ebx
+	cmp $0, %ebx
+	je Vzero
+	jmp BKplus
+	
+Vzero:
+
+	movl $1, %ebx
+	movl %ebx, index
+	
+	For_Vzero:
+	
+		movl index, %ebx
+		movl k, %edx
+		cmp n, %ebx
+		jg ajuns
+		jmp dupa
+		
+	ajuns:
+	
+		movl $0, (%edi, %edx, 4)
+		jmp BK_exit
+	
+	dupa:
+		
+		movl %ebx, (%edi, %edx, 4)
+		subl $1, %ebx
+		cmp $3, (%esi, %ebx, 4)
+		je cont_for_Vzero
+		
+		movl $1, %ebx
+		movl $1, %ecx
+	
+		For_distanta:
+	 	
+			movl m, %edx
+			cmp %edx, %ecx
+			jg final_distanta
+		
+			movl k, %eax
+			addl %ecx, %eax  	#k+j
+			movl nr, %edx 	
+			cmp %edx, %eax
+			jl cont1
+			jmp if2
+	
+		cont1:
+	
+			movl (%edi, %eax, 4), %edx
+			movl k, %eax
+			cmp %edx, (%edi, %eax, 4)
+			je break
+			jmp if2	
+		
+		if2:
+	
+			movl k, %eax
+			subl %ecx, %eax 	#k-j
+			cmp $0, %eax
+			jge cont2
+			jmp cont_for_distanta
+		
+		cont2:
+	
+			movl (%edi, %eax, 4), %edx
+			movl k, %eax
+			cmp %edx, (%edi, %eax, 4)
+			je break
+			jmp cont_for_distanta		
+
+		
+		break:
+		
+			movl $0, %ebx
+			jmp final_distanta	
+		
+		cont_for_distanta:
+	
+			incl %ecx
+			jmp For_distanta
+		
+	final_distanta:
+		
+		cmp $0, %ebx
+		je cont_for_Vzero
+		
+		movl index, %ebx
+		movl k, %edx
+		movl %ebx, (%edi, %edx, 4)
+		subl $1, %ebx
+		addl $1, (%esi, %ebx, 4)
+		jmp BKplus
+		
+	cont_for_Vzero:
+	
+		movl index, %ebx
+		incl %ebx
+		movl %ebx, index  	
+		jmp For_Vzero
+
+BKplus:
+	             
+	movl index, %ecx	
+	movl k, %edx
+	incl %edx
+	movl %edx, k
+	cmp nr, %edx
+	je gata
+	jmp BK_cont
+	
+gata:
+ 	
+ 	movl $1, %eax
+ 	movl %eax, adev
+ 	jmp BK_exit
+	
+BK_cont:
+
+	pushl %ecx	 
+	pushl %edx 
+	jmp apelare 
+ 	
+ next:	
+ 	popl %edx
+ 	decl %edx
+	movl %edx, k
+ 	popl %ecx	
+	
+	movl %eax, adev
+	cmp $1, %eax
+	je BK_exit
+	
+	movl %ecx, index
+	cmp $0, %ecx
+	je fix
+	
+	subl $1, %ecx
+	subl $1, (%esi, %ecx, 4)
+	movl index, %ecx
+	addl $1, %ecx
+	movl %ecx, index 
+	jmp For_Vzero	
+
+	fix:
+		jmp BK_exit 
+		
+apelare:
+
+	pushl adev
+ 	pushl %esi
+ 	pushl m
+ 	pushl n
+ 	pushl k
+ 	pushl %edi          
+ 	call Back
+	popl %ebx
+ 	popl %ebx
+ 	popl %ebx
+ 	popl %ebx
+ 	popl %ebx
+ 	popl %ebx
+ 	
+ 	jmp next
+
+
+BK_exit:
+
+	popl %ebx
+	popl %ebp
+	ret
+
+read:
+
+	pushl %ebp
+	movl %esp, %ebp  	#%esp:%ebp:(%ebp v)(<adr de in>)(v*)(n)
+	pushl %edi
+	pushl %esi
+	pushl %ebx
+	movl 8(%ebp), %edi 	#v
+	movl 12(%ebp), %eax 	#n
+	
+	xorl %ecx, %ecx
+	movl $fr, %esi
+	
+	For_fr:
+	
+		cmp %eax, %ecx
+		je dupa_for_fr
+		
+		movl $0, (%esi, %ecx, 4)
+		incl %ecx
+		jmp For_fr 
+	
+	dupa_for_fr:
+	
+		movl 12(%ebp), %eax 	#n
+		movl $3, %ebx
+		mull %ebx
+		movl $0, %ecx
+	
+	For_read:
+	
+		cmp %eax, %ecx
+		je exit_read
+		
+		movl (%edi, %ecx, 4), %ebx
+		cmp $0, %ebx
+		je cont_read
+		
+		subl $1, %ebx
+		addl $1, (%esi, %ebx, 4)
+		jmp cont_read
+		
+	cont_read:
+	
+		incl %ecx
+		jmp For_read
+		
+	exit_read:
+		
+		popl %ebx
+		popl %esi
+		popl %edi
+		popl %ebp
+		ret
+		
+		
+main:
+
+  	pushl $str
+  	pushl $formatScanf
+  	call scanf
+  	popl %ebx
+  	popl %ebx
+  	
+  	pushl $chDelim
+	pushl $str
+	call strtok 
+	popl %ebx
+	popl %ebx
+	
+	movl %eax, res
+	
+	pushl res
+	call atoi
+	popl %ebx
+	
+	movl %eax, N
+	
+	pushl $chDelim
+	pushl $0
+	call strtok
+	popl %ebx
+	popl %ebx
+	
+	movl %eax, res
+	
+	pushl res
+	call atoi
+	popl %ebx
+	
+	movl %eax, M
+	
+	lea V, %edi
+	movl $0, %ecx
+	
+	
+et_for:	
+ 	
+	pushl %edi
+	pushl %ecx
+	
+	pushl $chDelim
+	pushl $0
+	call strtok
+	popl %ebx
+	popl %ebx
+	
+	cmp $0, %eax
+	je inceput
+	
+	movl %eax, res
+	
+	pushl res
+	call atoi
+	popl %ebx
+	
+	popl %ecx
+	popl %edi
+	
+	movl %eax, (%edi,%ecx,4)
+	incl %ecx
+	jmp et_for
+	
+inceput:
+ 
+ 	lea fr, %esi
+ 	
+ 	pushl N
+ 	pushl $V
+ 	call read
+ 	popl %ebx
+ 	popl %ebx
+ 	
+
+back:
+ 	
+ 	pushl Adev
+ 	pushl $fr
+ 	pushl M
+ 	pushl N
+ 	pushl K
+ 	pushl $V             
+ 	call Back
+	popl %ebx
+ 	popl %ebx
+ 	popl %ebx
+ 	popl %ebx
+ 	popl %ebx
+ 	popl %ebx
+	
+verificare:
+
+	movl $0, %ecx
+	lea V, %edi
+	movl N, %eax
+	movl $3, %ebx
+	mull %ebx
+	movl %eax, %edx
+	
+	for_verificare:
+	
+		cmp %edx, %ecx
+		je fr_inainte
+		
+		movl (%edi, %ecx, 4), %eax
+		cmp $0, %eax
+		je print2
+		
+		incl %ecx
+		jmp for_verificare
+		
+	fr_inainte:
+	
+		xorl %ecx, %ecx
+		lea fr, %esi
+	
+	fr_verificare:
+	
+		cmp N, %ecx
+		je corect
+		
+		movl (%esi, %ecx, 4), %eax
+		cmp $3, %eax
+		jne print2
+		
+		incl %ecx
+		jmp fr_verificare
+		
+corect:
+
+	movl $0, %ecx
+	lea V, %edi
+	movl N, %eax
+	movl $3, %ebx
+	mull %ebx
+	movl %eax, %edx
+FOR:
+
+ 	cmp %edx, %ecx
+ 	je et_exit
+ 	
+ 	movl (%edi, %ecx, 4), %eax
+ 	
+ 	pushl %ecx
+ 	pushl %edi
+ 	pushl %edx
+ 	
+ 	pushl %eax
+ 	pushl $formatPrintf
+ 	call printf
+ 	popl %ebx
+ 	popl %ebx
+ 	
+ 	push $0
+  	call fflush
+  	pop %ebx
+ 	
+ 	popl %edx
+ 	popl %edi
+ 	popl %ecx
+ 	
+ 	incl %ecx
+ 	jmp FOR
+ 		
+	 
+print2:
+ 
+ 	pushl $gresit
+ 	pushl $formatPrintfgresit
+ 	call printf
+ 	popl %ebx
+ 	popl %ebx
+ 	
+ 	push $0
+  	call fflush
+  	pop %ebx
+ 	
+ 	jmp et_exit
+ 
+
+et_exit:
+
+  	pushl $formatprintf
+  	call printf
+  	popl %ebx
+  	
+	movl $1, %eax
+	xorl %ebx, %ebx
+	int $0x80 
